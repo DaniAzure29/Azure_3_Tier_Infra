@@ -27,3 +27,10 @@ variable "subnet_nsg_config" {
   }))
   description = "Configuration for subnets and their NSGs with rules"
 }
+
+variable "bastion_config" {
+  type = object({
+    subnet_address = string
+    
+  })
+}
