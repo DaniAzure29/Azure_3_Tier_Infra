@@ -30,7 +30,42 @@ variable "subnet_nsg_config" {
 
 variable "bastion_config" {
   type = object({
-    subnet_address = string
-    
+    subnet_address = string  
   })
 }
+
+variable "vmpassword" {
+  type = string
+  description = "This is keyvault secret value"
+  sensitive = true
+}
+
+/**
+variable "vmss_config" {
+type = map(object({
+  name = 
+}))
+}
+**/
+
+variable "load_balancer_config" {
+  type = map(object({
+    name       = string
+    is_public  = bool
+    sku        = string
+    subnet_id = optional(string)
+    rules = object({
+      protocol = string
+      frontend_port = string
+      backend_port = string
+    })
+    health_probe = object({
+      protocol = string
+      request_path = optional(string)
+      port = number
+      
+    })
+  }))
+  }
+
+  
