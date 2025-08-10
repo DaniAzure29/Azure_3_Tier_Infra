@@ -1,14 +1,49 @@
-# Azure 3-Tier Infrastructure (Network Layer)
+#Azure 3-Tier Infrastructure
 
-This project is for deploying a 3-tier web app infrastructure on Azure using Terraform.
+This project provisions a 3-tier web app infrastructure on Azure using Terraform.
 
-So far, the following has been completed:
+✅ Completed so far
+Network Layer
+Virtual Network (VNet) with three subnets:
 
-- Created a virtual network (VNet)
-- Created three subnets: web, app, and db
-- Created and attached Network Security Groups (NSGs) to each subnet
-- Created a Bastion Host
-- Created public and internal load balancers
-- Added an architecture diagram (`3-tier.png`) showing the full layout
+Web subnet – for frontend tier
 
-More components (e.g. Bastion, compute, load balancer) will be added in future commits.
+App subnet – for backend tier
+
+DB subnet – for database tier
+
+Network Security Groups (NSGs) created and associated with each subnet
+
+Azure Bastion Host for secure SSH/RDP without exposing VM public IPs
+
+Public Load Balancer for frontend tier
+
+Internal Load Balancer for backend tier
+
+Architecture Diagram (3-tier.png) illustrating the full layout
+
+Compute Layer
+Two Azure Virtual Machine Scale Sets (VMSS):
+
+Frontend VMSS in the Web subnet
+
+Uses Custom Script Extension to install Docker, pull frontend code from GitHub, build and run container
+
+Behind a Public Load Balancer for internet traffic
+
+Backend VMSS in the App subnet
+
+Uses Custom Script Extension to install Docker, pull backend code from GitHub, build and run container
+
+Behind an Internal Load Balancer for secure internal traffic only
+
+VMSS instances are provisioned automatically with the application running at first boot — no manual setup needed
+
+SSH access restricted via Azure Bastion
+
+🛠 Next Steps
+Database Layer — deploy Azure Database for MySQL/PostgreSQL or SQL Server in DB subnet
+
+Monitoring & Logging — enable Azure Monitor, Log Analytics, and alerts
+
+CI/CD — integrate with GitHub Actions or Azure DevOps for automated deployments

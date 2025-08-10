@@ -6,3 +6,4 @@
 .terraform.lock.hcl
 *.log
 *.bak
+.backend-config

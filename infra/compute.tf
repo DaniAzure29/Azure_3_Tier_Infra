@@ -1,7 +1,8 @@
-resource "azurerm_virtual_machine_scale_set" "example" {
-  name                = "mytestscaleset-1"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+resource "azurerm_virtual_machine_scale_set" "scaleset" {
+  for_each = var.vmss_config
+  name                = each.value.name
+  location            = azurerm_resource_group.projectgrp.location
+  resource_group_name = azurerm_resource_group.projectgrp.name
 
   # automatic rolling upgrade
   automatic_os_upgrade = true
@@ -31,43 +32,36 @@ resource "azurerm_virtual_machine_scale_set" "example" {
   }
 
   storage_profile_os_disk {
-    name              = ""
+    name              = "${each.value.name}-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
+    managed_disk_type = each.value.managed_disk_type
   }
 
   storage_profile_data_disk {
     lun           = 0
     caching       = "ReadWrite"
     create_option = "Empty"
-    disk_size_gb  = 10
+    disk_size_gb  = each.value.disk_size_gb
   }
 
   os_profile {
-    computer_name_prefix = "testvm"
-    admin_username       = "myadmin"
+    computer_name_prefix = each.value.computer_name_prefix
+    admin_username       = each.value.admin_username
+    admin_password = ""
   }
 
-  os_profile_linux_config {
-    disable_password_authentication = true
-
-    ssh_keys {
-      path     = "/home/myadmin/.ssh/authorized_keys"
-      key_data = file("~/.ssh/demo_key.pub")
-    }
-  }
+ 
 
   network_profile {
-    name    = "terraformnetworkprofile"
+    name    = "${each.value.name}-network"
     primary = true
 
     ip_configuration {
-      name                                   = "TestIPConfiguration"
+      name                                   = "${each.value.name}-ipconfig"
       primary                                = true
-      subnet_id                              = azurerm_subnet.example.id
-      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
-      load_balancer_inbound_nat_rules_ids    = [azurerm_lb_nat_pool.lbnatpool.id]
+      subnet_id                              = azurerm_subnet.infra_subnets[each.value.subnet].id
+      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.vm_pool[each.value.backend_pool].id]
     }
   }
 
@@ -75,12 +69,15 @@ resource "azurerm_virtual_machine_scale_set" "example" {
 }
 
 resource "azurerm_virtual_machine_scale_set_extension" "example" {
-  name                         = "example"
-  virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.example.id
+  for_each = var.vmss_config
+  name                         = "${each.key}-extension"
+  virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.scaleset[each.value.name].id
   publisher                    = "Microsoft.Azure.Extensions"
   type                         = "CustomScript"
   type_handler_version         = "2.0"
   settings = jsonencode({
-    "commandToExecute" = "echo $HOSTNAME"
+    fileUris          = [each.value.extension_URL]
+    commandToExecute  = each.value.command
   })
 }
+    

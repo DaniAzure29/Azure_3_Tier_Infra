@@ -40,13 +40,21 @@ variable "vmpassword" {
   sensitive = true
 }
 
-/**
+
 variable "vmss_config" {
 type = map(object({
-  name = 
+  name = string
+  managed_disk_type = string
+  disk_size_gb  = number
+  computer_name_prefix = string
+  admin_username = string
+  subnet = string
+  backend_pool = string
+  nat_rules = string
+  extension_URL = string
+  command = string
 }))
 }
-**/
 
 variable "load_balancer_config" {
   type = map(object({
