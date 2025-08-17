@@ -26,7 +26,7 @@ resource "azurerm_lb_backend_address_pool" "vm_pool" {
   name            = "${each.value.name}-pool"
 }
 
-resource "azurerm_lb_rule" "example" {
+resource "azurerm_lb_rule" "Vmss_rules" {
   for_each = var.load_balancer_config
   loadbalancer_id                = azurerm_lb.balancer[each.value.name].id
   name                           = "${each.value.name}-rule"

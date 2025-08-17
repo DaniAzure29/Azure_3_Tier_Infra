@@ -34,10 +34,9 @@ variable "bastion_config" {
   })
 }
 
-variable "vmpassword" {
+variable "sshkeypath" {
   type = string
-  description = "This is keyvault secret value"
-  sensitive = true
+  description = "This is the public ssh key file path"
 }
 
 
@@ -53,10 +52,21 @@ type = map(object({
   nat_rules = string
   extension_URL = string
   command = string
+  health_probe = string
+  scaling = object({
+    min                = number
+    max                = number
+    default            = number
+    scale_out_metric   = string
+    scale_out_threshold = number
+    scale_in_metric    = string
+    scale_in_threshold = number
+  })
 }))
 }
 
 variable "load_balancer_config" {
+
   type = map(object({
     name       = string
     is_public  = bool
@@ -74,6 +84,25 @@ variable "load_balancer_config" {
       
     })
   }))
-  }
+}
 
-  
+variable "database_config" {
+  type = object({
+    name = string
+    admin_username = string
+    storage_account_type = string
+  })
+}
+
+
+
+variable "monitor_config" {
+  type = object({
+    alert_email = string
+    VMnames = list(string)
+    vmdiagnostics_config = map(object({
+      enable_vm_insights = bool
+      isVM = bool
+    }))
+  })
+}

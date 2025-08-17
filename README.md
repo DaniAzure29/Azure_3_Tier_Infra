@@ -1,49 +1,117 @@
-#Azure 3-Tier Infrastructure
+🚀 3-Tier Azure Infrastructure with Terraform
 
-This project provisions a 3-tier web app infrastructure on Azure using Terraform.
+📖 Overview
 
-✅ Completed so far
-Network Layer
-Virtual Network (VNet) with three subnets:
+This project provisions a secure, production-ready 3-tier web application infrastructure on Microsoft Azure using Terraform.
 
-Web subnet – for frontend tier
+The deployment was designed to meet client requirements for scalability, security, and monitoring, ensuring that both internal and external application traffic is efficiently handled and highly available.
 
-App subnet – for backend tier
+The solution includes:
+• Web Tier – Highly available via a VM Scale Set behind a Public Load Balancer.
+• Application Tier – Hosted on a VM Scale Set behind an Internal Load Balancer.
+• Database Tier – Single secure VM for persistence.
+• Security Layer – NSGs, subnet isolation, and Bastion host for secure access.
+• Monitoring – Azure Monitor alerts for CPU, memory, disk, and availability.
 
-DB subnet – for database tier
+🏗️ Architecture
 
-Network Security Groups (NSGs) created and associated with each subnet
+The infrastructure follows a standard 3-tier architecture pattern.
 
-Azure Bastion Host for secure SSH/RDP without exposing VM public IPs
+📌 Diagram:
 
-Public Load Balancer for frontend tier
+Internet
+│
+[ Public Load Balancer ]
+│
+Web VMSS (Scale Set)
+│
+[ Internal Load Balancer ]
+│
+App VMSS (Scale Set)
+│
+Database VM
 
-Internal Load Balancer for backend tier
+Additional components:
+• Azure Bastion – Secure access without exposing public SSH/RDP.
+• Azure Monitor – Metrics and alerts for availability & performance.
+• Terraform Remote State (Azure Storage) – State stored centrally for reliability.
 
-Architecture Diagram (3-tier.png) illustrating the full layout
+⸻
 
-Compute Layer
-Two Azure Virtual Machine Scale Sets (VMSS):
+⚙️ Tech Stack
+• Terraform – Infrastructure as Code (IaC)
+• Azure Compute – VM Scale Sets & Virtual Machines
+• Azure Networking – VNet, Subnets, NSGs, Load Balancers
+• Azure Bastion – Secure remote access
+• Azure Monitor – Metrics & Alerts
+• GitHub – App bootstrap scripts pulled directly from repo
 
-Frontend VMSS in the Web subnet
+📂 Project Structure
 
-Uses Custom Script Extension to install Docker, pull frontend code from GitHub, build and run container
+.
+├── main.tf # Root Terraform configuration
+├── variables.tf # Input variables
+├── network.tf # VNet, Subnets, NSGs
+├── compute.tf # VM Scale Sets & Database VM
+├── security.tf # Security Rules
+├── bastion.tf # Bastion configuration
+├── balancer.tf # Public & Internal Load Balancers
+├── monitoring.tf # Azure Monitor Alerts & Action Groups
+├── backend.tf # Remote state configuration
+├── outputs.tf # Key output values
+├── local.tf #local variables
+├── provider.tf #terraform provider for azure
+├── diagram/
+│ └── 3-tier.png # Infrastructure diagram
+└── README.md # Documentation
 
-Behind a Public Load Balancer for internet traffic
+🚀 Deployment Guide
 
-Backend VMSS in the App subnet
+1️⃣ Clone the Repository
+git clone https://github.com/DaniAzure29/Azure_3_Tier_Infra.git
+cd Azure-3_Tier-Infra
 
-Uses Custom Script Extension to install Docker, pull backend code from GitHub, build and run container
+2️⃣ Configure Backend & Variables
 
-Behind an Internal Load Balancer for secure internal traffic only
+Update backend.tf with your Storage Account, Container, and Resource Group.
+Define environment-specific inputs in terraform.tfvars.
 
-VMSS instances are provisioned automatically with the application running at first boot — no manual setup needed
+3️⃣ Initialize Terraform
+./infra/.terraform init
+or cd Azure-3_Tier-Infra/infra
+.terraform init
 
-SSH access restricted via Azure Bastion
+4️⃣ Validate & Plan Deployment
+.terraform plan
 
-🛠 Next Steps
-Database Layer — deploy Azure Database for MySQL/PostgreSQL or SQL Server in DB subnet
+5️⃣ Apply Deployment
+.terraform apply -auto-approve
 
-Monitoring & Logging — enable Azure Monitor, Log Analytics, and alerts
+📊 Monitoring & Scaling
+• VM Scale Sets automatically scale out/in based on demand.
+• Azure Monitor sends alerts when:
+• CPU > 75%
+• Available memory < 500MB
+• Disk usage > 80%
+• VM Availability drops
 
-CI/CD — integrate with GitHub Actions or Azure DevOps for automated deployments
+⸻
+
+🔐 Security Highlights
+• No public IPs on VMs (only Load Balancers & Bastion exposed).
+• NSGs enforce least-privilege access.
+• SSH authentication with keys (password disabled).
+• Remote state stored securely in Azure Storage.
+
+⸻
+
+🎯 Deliverables
+• A fully automated 3-tier Azure infrastructure deployment.
+• Scalable Web & App tiers with load balancers.
+• Secure database tier with network isolation.
+• Monitoring & alerting for proactive response.
+• Architecture diagram included for clarity.
+
+⸻
+
+👉 This project demonstrates end-to-end cloud infrastructure delivery for a client, from design (diagram) to deployment (Terraform) to monitoring (Azure Monitor).
