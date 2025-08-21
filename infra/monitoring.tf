@@ -9,8 +9,7 @@ resource "azurerm_log_analytics_workspace" "infra_analytics" {
 
 # 2. Diagnostic Settings for Web VMSS, App VMSS and DB Vm
 resource "azurerm_monitor_diagnostic_setting" "vm_diagnostics" {
-    for_each = var.monitor_config.vmdiagnostics_config
-  count                      = each.value.enable_vm_insights ? 1 : 0
+  for_each = var.monitor_config.vmdiagnostics_config
   name                       = "${each.key}-diagnostics"
   target_resource_id         = each.value.isVM ? azurerm_linux_virtual_machine.databasevm : azurerm_linux_virtual_machine_scale_set.scaleset[each.key].id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id
