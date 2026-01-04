@@ -1,14 +1,8 @@
-variable "rgrp_input" {
-  type = object({
-    name = string
-    location = string
-  })
-}
-
 variable "vnet_input" {
   type = object({
     name = string
     address_space = string
+    location = string
     rgrp = string
   })
 }
@@ -19,4 +13,3 @@ variable "subnet_input" {
     cidr = string
   }))
 }
-
