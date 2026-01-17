@@ -13,3 +13,10 @@ for_each = var.subnet_input
   address_prefixes     = [each.value.cidr]
 }
 
+
+resource "azurerm_public_ip" "gateway-ip" {
+  name                = "gateway-ip"
+  resource_group_name = var.vnet_input.rgrp
+  location            = var.vnet_input.location
+  allocation_method   = "Static"
+}
