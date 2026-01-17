@@ -65,3 +65,10 @@ module "endpoints" {
   rgrp_name = module.resource_grp.name  
   rgrp_location = module.resource_grp.location
 }
+
+module "nsg" {
+  source = "./modules/nsg"
+  nsg_config = var.nsg_config
+  resource_grp = module.resource_grp.name
+  location = module.resource_grp.location
+}
