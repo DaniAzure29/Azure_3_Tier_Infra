@@ -4,7 +4,6 @@ variable "private_endpoints" {
     subnet_id                = string
     private_resource_id      = string
     subresource_name         = string
-    private_dns_zone_id      = string
     vnet_id                  = string
   }))
 }

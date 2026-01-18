@@ -64,6 +64,10 @@ resource "azurerm_linux_virtual_machine" "example" {
     sku       = var.linux_vm_config.source_image_reference.sku
     version   = var.linux_vm_config.source_image_reference.version
   }
+  identity {
+    type = "SystemAssigned"
+    }
+
 }
 
 resource "azurerm_network_interface" "linux_vm_nic" {
@@ -77,3 +81,4 @@ resource "azurerm_network_interface" "linux_vm_nic" {
     private_ip_address_allocation = "Static"
   }
 }
+
