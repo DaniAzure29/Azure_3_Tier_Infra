@@ -38,7 +38,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "Web_VMSS" {
 
 }
 
-resource "azurerm_linux_virtual_machine" "example" {
+resource "azurerm_linux_virtual_machine" "linux_vm" {
   name                = var.linux_vm_config.name
   resource_group_name = var.resorce_grp
   location            = var.location

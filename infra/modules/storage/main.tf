@@ -1,4 +1,4 @@
-resource "azurerm_storage_account" "example" {
+resource "azurerm_storage_account" "storage" {
   name                     = var.storage_inputs.name
   resource_group_name      = var.rgrp_name
   location                 = var.rgrp_location

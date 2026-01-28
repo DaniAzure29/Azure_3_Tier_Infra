@@ -71,3 +71,8 @@ module "nsg" {
   location = module.resource_grp.location
 }
 
+module "iam" {
+  source = "./modules/iam"
+  linux_vm_principal_id = module.compute.linux_vm_principal_id
+  storage_account_id = module.storage.storage_account_id
+}

@@ -36,6 +36,12 @@ resource "azurerm_application_gateway" "gateway" {
     port                  = var.gateway_config.backend_http_settings.port
     protocol              = var.gateway_config.backend_http_settings.protocol
     request_timeout       = var.gateway_config.backend_http_settings.request_timeout
+    trusted_root_certificate_names = ["application-cert"]
+  }
+
+  trusted_root_certificate {
+    name = "application-cert"
+    data = var.gateway_config.trusted_root_certificate_data
   }
 
   http_listener {
@@ -53,5 +59,31 @@ resource "azurerm_application_gateway" "gateway" {
     backend_address_pool_name  = "${var.gateway_config.name}-backend-pool"
     backend_http_settings_name = "${var.gateway_config.name}-http-setting"
   }
+  identity {
+    type = "SystemAssigned"
+  }
+
+  enable_http2 = true
+  firewall_policy_id = azurerm_web_application_firewall_policy.gateway-waf.id
 }
+
+resource "azurerm_web_application_firewall_policy" "gateway-waf" {
+  name                = "gateway-wafpolicy"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+
+  policy_settings {
+    enabled            = true
+    mode               = "Prevention"
+    request_body_check = true
+  }
+
+  managed_rules {
+    managed_rule_set {
+      type    = "OWASP"
+      version = "3.2"
+    }
+  }
+}
+
 

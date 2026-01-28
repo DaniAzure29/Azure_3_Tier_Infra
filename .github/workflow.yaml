@@ -1,0 +1,40 @@
+name: Infra and App pipeline
+
+on:
+  push:
+    branches: ["main"]
+env:
+  TF_VERSION: "4.57.0"
+
+jobs:
+  ##############################################################
+  # JOB 1: Infrastructure Pipeline
+  ##############################################################
+  infra:
+    name: Infra Pipeline
+    runs-on: ubuntu-latest
+    environment: infra
+
+    permissions:
+      contents: read
+      id-token: write
+      actions: write
+      secrets: write
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: infra
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: infra
+        run: terraform apply -auto-approve
+

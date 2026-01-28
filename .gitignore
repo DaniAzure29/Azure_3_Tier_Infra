@@ -8,4 +8,4 @@
 *.bak
 .backend-config
 app/
-terraform.exe
+**/terraform.exe
